@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract QatarSticker is ERC721 {
     uint256 public totalMints = 0;
-    uint256 public player = 0;
+    uint256 private maxPlayer = 600;
     address owner;
     uint256 public mintPrice = 1000000 gwei; 
     string public URI = "https://bafybeifqmgyfy4by3gpms5sdv3ft3knccmjsqxfqquuxemohtwfm7y7nwa.ipfs.dweb.link/metadata.json";
@@ -26,16 +26,15 @@ contract QatarSticker is ERC721 {
     }
 
     function safeMint(address to) internal {
-        uint256 tokenId = totalMints;
-        totalMints++;
+        uint tokenId = totalMints;
         walletToStickers[msg.sender].push(tokenId);
-        stickerToPlayer[tokenId] = player;
-        player++;
+        stickerToPlayer[tokenId] = randomPlayerId();
+        totalMints++;
 
         _safeMint(to, tokenId);
     }
 
-    function getStickersFromWallet(address wallet) public view returns (uint256[]) {
+    function getStickersFromWallet(address wallet) public view returns (uint256[] memory) {
         return walletToStickers[wallet];
     }
 
@@ -49,6 +48,11 @@ contract QatarSticker is ERC721 {
         for (uint i; i < quantity_; i++) {
             safeMint(msg.sender);
         }
+    }
+
+    function randomPlayerId() private view returns (uint256) {
+        uint randId = uint(keccak256(abi.encodePacked(block.timestamp)));
+        return randId % maxPlayer; 
     }
 
     function withdraw() public {
