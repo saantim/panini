@@ -5,21 +5,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract QatarSticker is ERC721 {
     uint256 public totalMints = 0;
-    uint256 private maxPlayer = 600;
+    uint256 private maxPlayer = 711;
     address owner;
     uint256 public mintPrice = 1000000 gwei; 
     string public URI = "https://bafybeifqmgyfy4by3gpms5sdv3ft3knccmjsqxfqquuxemohtwfm7y7nwa.ipfs.dweb.link/metadata.json";
 
-    // first-name
-    // last-name
-    // nationality
-    // height
-    // player-number
-    // image
-
-    mapping(address => uint256[]) public walletToStickers;  // address a id generado del NFT de la figurita
-    mapping(uint256 => uint256) public stickerToPlayer;     // id del sticker al id del jugador
-    mapping(uint256 => string) public playerToURI;          // id que representa al jdor a su URI
+    mapping(uint256 => uint256) public stickerToPlayer;
+    mapping(uint256 => string) public playerToURI; 
 
     constructor() ERC721("QatarSticker", "QST") {
         owner = msg.sender;
@@ -27,7 +19,6 @@ contract QatarSticker is ERC721 {
 
     function safeMint(address to) internal {
         uint tokenId = totalMints;
-        walletToStickers[msg.sender].push(tokenId);
         stickerToPlayer[tokenId] = randomPlayerId();
         totalMints++;
 
@@ -35,7 +26,17 @@ contract QatarSticker is ERC721 {
     }
 
     function getStickersFromWallet(address wallet) public view returns (uint256[] memory) {
-        return walletToStickers[wallet];
+        uint[] memory result = new uint[](balanceOf(wallet));
+        uint counter = 0;
+
+        for (uint i = 0; i < totalMints; i++){
+            if (ownerOf(i) == wallet){
+                result[counter] = i;
+                counter++;
+            }
+        }
+
+        return result;
     }
 
     function getPlayerIdFromStickerId(uint256 stickerId) public view returns (uint256) {
@@ -58,5 +59,4 @@ contract QatarSticker is ERC721 {
     function withdraw() public {
         payable(owner).transfer(address(this).balance);
     }
-
 }
