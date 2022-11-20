@@ -2,61 +2,81 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract QatarSticker is ERC721 {
+contract QatarSticker is ERC721, Ownable{
+    
+    // ---------------------------------------------------
+    // public variables
+    // ---------------------------------------------------
     uint256 public totalMints = 0;
-    uint256 private maxPlayer = 600;
-    address owner;
     uint256 public mintPrice = 1000000 gwei; 
     string public URI = "https://bafybeifqmgyfy4by3gpms5sdv3ft3knccmjsqxfqquuxemohtwfm7y7nwa.ipfs.dweb.link/metadata.json";
+    
+    mapping(uint256 => uint256) public stickerToPlayer;
+    mapping(uint256 => string) public playerToURI; 
+    
+    // ---------------------------------------------------
+    // private variables
+    // ---------------------------------------------------
+    address private packageContractAddress;
+    uint256 private maxPlayer = 711;
 
-    // first-name
-    // last-name
-    // nationality
-    // height
-    // player-number
-    // image
+    // ---------------------------------------------------
+    // configuration
+    // ---------------------------------------------------
+    function setPackageContractAddress(address newPackageContractAddress) public onlyOwner {
+        packageContractAddress = newPackageContractAddress;
+    }
 
-    mapping(address => uint256[]) public walletToStickers;  // address a id generado del NFT de la figurita
-    mapping(uint256 => uint256) public stickerToPlayer;     // id del sticker al id del jugador
-    mapping(uint256 => string) public playerToURI;          // id que representa al jdor a su URI
+    // ---------------------------------------------------
+    // modifiers
+    // ---------------------------------------------------
+    modifier onlyPackageContract(){
+        require(msg.sender == packageContractAddress);
+        _;
+    }
 
+    // ---------------------------------------------------
+    // functions
+    // ---------------------------------------------------
     constructor() ERC721("QatarSticker", "QST") {
-        owner = msg.sender;
+    }
+
+    function createStickers(address packageOwner, uint256 quantity) public onlyPackageContract {
+        for (uint i = 0; i < quantity; i++) {
+            safeMint(packageOwner);
+        }
     }
 
     function safeMint(address to) internal {
         uint tokenId = totalMints;
-        walletToStickers[msg.sender].push(tokenId);
         stickerToPlayer[tokenId] = randomPlayerId();
         totalMints++;
 
         _safeMint(to, tokenId);
     }
 
-    function getStickersFromWallet(address wallet) public view returns (uint256[] memory) {
-        return walletToStickers[wallet];
+    function randomPlayerId() private view returns (uint256) {
+        uint randId = uint(keccak256(abi.encodePacked(totalMints)));
+        return randId % maxPlayer; 
     }
 
     function getPlayerIdFromStickerId(uint256 stickerId) public view returns (uint256) {
         return stickerToPlayer[stickerId];
     }
 
-    function mintToken(uint256 quantity_) public payable {
-        require(quantity_ * mintPrice == msg.value, "wrong amount sent");
+    function getStickersFromWallet(address wallet) public view returns (uint256[] memory) {
+        uint[] memory result = new uint[](balanceOf(wallet));
+        uint counter = 0;
 
-        for (uint i; i < quantity_; i++) {
-            safeMint(msg.sender);
+        for (uint i = 0; i < totalMints; i++){
+            if (ownerOf(i) == wallet){
+                result[counter] = i;
+                counter++;
+            }
         }
-    }
 
-    function randomPlayerId() private view returns (uint256) {
-        uint randId = uint(keccak256(abi.encodePacked(block.timestamp)));
-        return randId % maxPlayer; 
+        return result;
     }
-
-    function withdraw() public {
-        payable(owner).transfer(address(this).balance);
-    }
-
 }
