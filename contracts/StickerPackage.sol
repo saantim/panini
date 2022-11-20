@@ -5,16 +5,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 interface FiubaCoinInterface {
-  function transfermFrom(address _from, address _to, uint _amount);
+  function transferFrom(address _from, address _to, uint _amount) external;
 }
 
 interface StickerInterface {
-  function createStickers(address _address, uint _amount);
+  function createStickers(address _address, uint _amount) external;
 }
 
 contract StickerPackageContract is Ownable {
   using SafeMath for uint;
-
   address coinAddress;
   address stickerAddress;
   uint price;
@@ -45,7 +44,7 @@ contract StickerPackageContract is Ownable {
   }
 
   function buyPackages(uint _quantity) external withPriceSetted {
-    FiubaCoinInterface coinContact = FiubaCoinInterface(coinAddress).transferFrom(
+    FiubaCoinInterface(coinAddress).transferFrom(
       msg.sender,
       address(this),
       _quantity * price
@@ -55,7 +54,7 @@ contract StickerPackageContract is Ownable {
 
   function openPackage() external {
     require(packagesFromUser[msg.sender] > 0);
-    StickerInterface stickerContract = StickerInterface(stickerAddress).createStickers(msg.sender, stickersPerPackages);
+    StickerInterface(stickerAddress).createStickers(msg.sender, stickersPerPackages);
     packagesFromUser[msg.sender] = packagesFromUser[msg.sender].sub(1);
   }
 
