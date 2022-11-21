@@ -8,7 +8,6 @@ contract ExchangeOfQatarSticker is QatarSticker{
     // structs
     // ---------------------------------------------------
     struct exchange {
-        uint exchangeId;
         address owner;
         uint tokenIdToExchange;
         uint playerIdWanted;
@@ -25,22 +24,22 @@ contract ExchangeOfQatarSticker is QatarSticker{
     // modifiers
     // ---------------------------------------------------
     modifier exchageExist(uint exchangeId){
-        require(exchangeId < numberOfExchanges);
+        require(exchangeId <= numberOfExchanges, "exchangeId doesn't exists");
         _;
     }
 
     modifier onlyOwnerOfSticker(uint stickerId){
-        require(ownerOf(stickerId) == msg.sender);
+        require(ownerOf(stickerId) == msg.sender, "message sender is not sticker owner");
         _;
     }
 
     modifier onlyOwnerOfExchange(uint exchangeId){
-        require(exchanges[exchangeId].owner == msg.sender);
+        require(exchanges[exchangeId].owner == msg.sender, "message sender is not exchange owner");
         _;
     }
 
     modifier isActive(uint exchangeId){
-        require(exchanges[exchangeId].active);
+        require(exchanges[exchangeId].active, "exchange is not active");
         _;
     }
 
@@ -48,8 +47,8 @@ contract ExchangeOfQatarSticker is QatarSticker{
     // functions
     // ---------------------------------------------------
     function iWantToExchange(uint tokenId, uint playerId) public onlyOwnerOfSticker(tokenId) {
+        exchanges[numberOfExchanges] = exchange(msg.sender, tokenId, playerId, true);
         numberOfExchanges++;
-        exchanges[numberOfExchanges] = exchange(numberOfExchanges, msg.sender, tokenId, playerId, true);
     }
 
     function acceptExchange(uint exchangeId) public exchageExist(exchangeId) isActive(exchangeId){
@@ -59,21 +58,41 @@ contract ExchangeOfQatarSticker is QatarSticker{
         address owner = e.owner;
         address interested = msg.sender;
 
-        (bool hasWantedPlayer, uint tokenIdWanted) = heHasWantedPlayer(playerIdWanted, interested);
-        require(hasWantedPlayer);
+        (bool wantedPlayer, uint tokenIdWanted) = hasWantedPlayer(playerIdWanted, interested);
+        require(wantedPlayer, "The person who is accepting exchange hasn't wanted player");
 
         _transfer(owner, interested, tokenIdToExchange);
         _transfer(interested, owner, tokenIdWanted);
+        cancelExchangeWithTokenId(tokenIdToExchange);
+        cancelExchangeWithTokenId(tokenIdWanted);
+    }
+
+    function cancelExchangeWithTokenId(uint tokenId) private {
+        for (uint i = 0; i <= numberOfExchanges; i++){
+            if (exchanges[i].active == true && exchanges[i].tokenIdToExchange == tokenId){
+                exchanges[i].active = false;
+            }
+        }
     }
 
     function cancelExchange(uint exchangeId) public exchageExist(exchangeId) onlyOwnerOfExchange(exchangeId){
         exchanges[exchangeId].active = false;
     }
 
-    function getAllExchanges() public view returns(uint[] memory) {
-        uint[] memory result = new uint[](numberOfExchanges);
-
+    function activeExchanges() public view returns(uint) {
         uint counter = 0;
+
+        for (uint i = 0; i <= numberOfExchanges; i++){
+            if (exchanges[i].active == true){
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    function getAllExchanges() public view returns(uint[] memory) {
+        uint counter = 0;
+        uint[] memory result = new uint[](activeExchanges());
 
         for (uint i = 0; i < numberOfExchanges; i++){
             if (exchanges[i].active == true){
@@ -85,7 +104,7 @@ contract ExchangeOfQatarSticker is QatarSticker{
         return result;
     }
 
-    function heHasWantedPlayer(uint playerIdWanted, address wallet) internal view returns (bool, uint) {
+    function hasWantedPlayer(uint playerIdWanted, address wallet) internal view returns (bool, uint) {
         uint256[] memory stickers = getStickersFromWallet(wallet);
 
         for (uint i = 0; i < stickers.length; i++){

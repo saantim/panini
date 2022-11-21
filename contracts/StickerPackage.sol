@@ -32,7 +32,7 @@ contract StickerPackageContract is Ownable {
   }
 
   function setPrice(uint _price) external onlyOwner {
-    price = _price; 
+    price = _price * 10 ** 18; 
   }
   
   function setFiubaCoinAddress(address _coinAddress) external onlyOwner {
