@@ -3,10 +3,10 @@ pragma solidity ^0.8.17;
 
 import "./Stickers.sol";
 
-/// @title 
+/// @title A Sticker Exchange Implementation
 /// @author @mrti259/@saantim/@ovr4ulin
-/// @notice 
-/// @dev 
+/// @notice You can use this contract to swap stickers between differt wallets
+/// @dev You can create an exchange where you offer one sticker token and requier another one. Then another person could accept this exchange if meet the requierments. 
 contract ExchangeOfQatarSticker is QatarSticker{
     struct exchange {
         address owner;
@@ -47,7 +47,7 @@ contract ExchangeOfQatarSticker is QatarSticker{
     }
 
     /// @notice You can use this function to initialize an exchange
-    /// @dev 
+    /// @dev Add to the exchange mapping a new exchange
     /// @param tokenId It's the token to exchange
     /// @param playerId It's the playerId wanted
     function iWantToExchange(uint tokenId, uint playerId) public onlyOwnerOfSticker(tokenId) {
