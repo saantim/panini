@@ -1,0 +1,31 @@
+{
+  "name": "panini-sol",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "ganache": "ganache-cli --deterministic",
+    "compile": "truffle compile",
+    "develop": "truffle develop",
+    "migrate": "truffle migrate",
+    "deploy": "truffle deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saantim/panini.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saantim/panini/issues"
+  },
+  "homepage": "https://github.com/saantim/panini#readme",
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.8.0",
+    "ganache-cli": "^6.12.2",
+    "truffle": "^5.6.7"
+  }
+}
