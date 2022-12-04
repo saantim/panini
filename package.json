@@ -1,31 +1,28 @@
 {
-  "name": "panini-sol",
+  "name": "libqatan",
   "version": "1.0.0",
-  "description": "",
-  "main": "truffle-config.js",
-  "directories": {
-    "test": "test"
-  },
+  "type": "commonjs",
   "scripts": {
-    "ganache": "ganache-cli --deterministic",
+    "network": "ganache-cli --deterministic",
+    "networks": "truffle networks",
     "compile": "truffle compile",
     "develop": "truffle develop",
     "migrate": "truffle migrate",
-    "deploy": "truffle deploy"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/saantim/panini.git"
+    "prettier": "prettier --write contracts",
+    "lint": "prettier --list-different contracts"
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/saantim/panini/issues"
-  },
-  "homepage": "https://github.com/saantim/panini#readme",
-  "devDependencies": {
+  "dependencies": {
     "@openzeppelin/contracts": "^4.8.0",
+    "@truffle/contract": "^4.6.8",
+    "@truffle/hdwallet-provider": "^2.1.2",
+    "dotenv": "^16.0.3",
     "ganache-cli": "^6.12.2",
-    "truffle": "^5.6.7"
+    "truffle": "^5.6.8"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.0",
+    "prettier-plugin-solidity": "^1.0.0"
   }
 }
