@@ -1,4 +1,4 @@
-// @ts-nocheck
+/* eslint-disable no-undef */
 const FiubaCoin = artifacts.require("FiubaCoin");
 const QatanSticker = artifacts.require("QatanSticker");
 const QatanStickerExchange = artifacts.require("QatanStickerExchange");

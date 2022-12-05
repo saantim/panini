@@ -26,6 +26,6 @@ contract FiubaCoin is ERC20 {
     /// @param quantity It's the quantity of FiubaCoins to be minted
     function buyCoins(uint256 quantity) external payable {
         require(quantity * price == msg.value, "wrong amount sent");
-        _mint(msg.sender, quantity * 10 ** 18);
+        _mint(msg.sender, quantity);
     }
 }

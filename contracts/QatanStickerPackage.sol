@@ -24,15 +24,13 @@ contract QatanStickerPackage is Ownable {
     using SafeMath for uint256;
     address coinAddress;
     address stickerAddress;
-    uint256 price;
-    uint256 stickersPerPackages = 5;
+    uint256 public price;
+    uint256 public stickersPerPackages = 5;
 
     mapping(address => uint256) packagesFromUser;
 
-    /// @dev Verify price is a positive non-zero value
-    modifier withPriceSetted() {
-        require(price > 0);
-        _;
+    constructor() {
+        _setPrice(1);
     }
 
     /// @notice Set an amount of stickers you gonna get per package
@@ -47,7 +45,11 @@ contract QatanStickerPackage is Ownable {
     /// @dev Only the owner of this contract could change the price
     /// @param newPrice New price of a package
     function setPrice(uint256 newPrice) external onlyOwner {
-        price = newPrice * 10**18;
+        _setPrice(newPrice);
+    }
+
+    function _setPrice(uint256 newPrice) private {
+        price = newPrice;
     }
 
     /// @notice Set the FiubaCoin contract address
@@ -67,7 +69,8 @@ contract QatanStickerPackage is Ownable {
     /// @notice You can buy quantity of packages using your FiubaCoins
     /// @dev Tries to transfer from FiubaCoin address the necesary FiubaCoins to get the required packages
     /// @param quantity The quantity of required packages to buy
-    function buyPackages(uint256 quantity) external withPriceSetted {
+    function buyPackages(uint256 quantity) external {
+        require(price > 0, "New packages aren't available");
         FiubaCoinInterface(coinAddress).transferFrom(
             msg.sender,
             address(this),

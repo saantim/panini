@@ -7,8 +7,9 @@
     "networks": "truffle networks",
     "compile": "truffle compile",
     "develop": "truffle develop",
+    "console": "truffle console",
     "migrate": "truffle migrate",
-    "prettier": "prettier --write contracts",
+    "format": "prettier --write contracts",
     "lint": "prettier --list-different contracts"
   },
   "author": "",
