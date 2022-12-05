@@ -5,15 +5,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 interface FiubaCoinInterface {
-    function transferFrom(
-        address _from,
-        address _to,
-        uint256 _amount
-    ) external;
+    function transferFrom(address from, address to, uint256 amount) external;
 }
 
 interface QatanStickerInterface {
-    function createStickers(address _address, uint256 _amount) external;
+    function createStickers(address owner, uint256 amount) external;
 }
 
 /// @title  A Sticker Package's implementation
@@ -96,11 +92,9 @@ contract QatanStickerPackage is Ownable {
     /// @dev Access to a mapping to get the number of packages associated to an address
     /// @param owner Owner of address wallet
     /// @return amount Quantity of packages associated to a specify wallet
-    function getAmountOfPackagesFrom(address owner)
-        external
-        view
-        returns (uint256)
-    {
+    function getAmountOfPackagesFrom(
+        address owner
+    ) external view returns (uint256) {
         return packagesFromUser[owner];
     }
 }

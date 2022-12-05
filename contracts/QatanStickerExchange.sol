@@ -56,10 +56,10 @@ contract QatanStickerExchange is QatanSticker {
     /// @dev Add to the exchange mapping a new exchange
     /// @param tokenId It's the token to exchange
     /// @param playerId It's the playerId wanted
-    function createExchange(uint256 tokenId, uint256 playerId)
-        public
-        onlyOwnerOfSticker(tokenId)
-    {
+    function createExchange(
+        uint256 tokenId,
+        uint256 playerId
+    ) public onlyOwnerOfSticker(tokenId) {
         exchanges[numberOfExchanges] = Exchange(
             msg.sender,
             tokenId,
@@ -72,11 +72,9 @@ contract QatanStickerExchange is QatanSticker {
     /// @notice You can use this function to accept an exchange
     /// @dev If the exchanges exists and is an active exchange this function will verify if the message sender could accept it, and in that case, this function will execute the exchange of the sticker using the sticker transfer method
     /// @param exchangeId It's the unique-number of the exchange to be accepted
-    function acceptExchange(uint256 exchangeId)
-        public
-        exchageExist(exchangeId)
-        isActive(exchangeId)
-    {
+    function acceptExchange(
+        uint256 exchangeId
+    ) public exchageExist(exchangeId) isActive(exchangeId) {
         Exchange memory e = exchanges[exchangeId];
         uint256 playerIdWanted = e.playerIdWanted;
         uint256 tokenIdToExchange = e.tokenIdToExchange;
@@ -108,11 +106,9 @@ contract QatanStickerExchange is QatanSticker {
     /// @notice You can cancel an exchange
     /// @dev Changes the active status of an exchange to false
     /// @param exchangeId It's the unique-number of the exchange to cancel
-    function cancelExchange(uint256 exchangeId)
-        public
-        exchageExist(exchangeId)
-        onlyOwnerOfExchange(exchangeId)
-    {
+    function cancelExchange(
+        uint256 exchangeId
+    ) public exchageExist(exchangeId) onlyOwnerOfExchange(exchangeId) {
         exchanges[exchangeId].active = false;
     }
 
@@ -151,11 +147,10 @@ contract QatanStickerExchange is QatanSticker {
     /// @param playerIdWanted It's the searched playerId
     /// @param wallet It's the address where the playerId gonna be looked by
     /// @return stickerId If could find the wanted player it returns the stickerId, otherwise returns 0
-    function getPlayerFromWallet(uint256 playerIdWanted, address wallet)
-        internal
-        view
-        returns (uint256)
-    {
+    function getPlayerFromWallet(
+        uint256 playerIdWanted,
+        address wallet
+    ) internal view returns (uint256) {
         uint256[] memory stickers = getStickersFromWallet(wallet);
 
         for (uint256 i = 0; i < stickers.length; i++) {
