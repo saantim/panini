@@ -25,10 +25,6 @@ contract QatanStickerPackage is Ownable {
 
     mapping(address => uint256) packagesFromUser;
 
-    constructor() {
-        _setPrice(1);
-    }
-
     /// @notice Set an amount of stickers you gonna get per package
     /// @dev This funtion sets the quantity of sticker per package and verify if the inserted amount as parameter is bigger than zero
     /// @param amount A new amount of stickers per package
@@ -45,7 +41,7 @@ contract QatanStickerPackage is Ownable {
     }
 
     function _setPrice(uint256 newPrice) private {
-        price = newPrice;
+        price = newPrice * 10 ** 18;
     }
 
     /// @notice Set the FiubaCoin contract address
@@ -80,7 +76,7 @@ contract QatanStickerPackage is Ownable {
     /// @notice You can open a package to get stickers
     /// @dev If the user have packages, you can get Stickers from this function
     function openPackage() external {
-        require(packagesFromUser[msg.sender] > 0);
+        require(packagesFromUser[msg.sender] > 0, "Sender doesn't have packages available");
         QatanStickerInterface(stickerAddress).createStickers(
             msg.sender,
             stickersPerPackages

@@ -28,7 +28,7 @@ contract QatanSticker is ERC721, Ownable {
 
     /// @dev This modifier verifies if the package contract is the message sender
     modifier onlyPackageContract() {
-        require(msg.sender == packageContractAddress);
+        require(msg.sender == packageContractAddress, "Forbidden");
         _;
     }
 
