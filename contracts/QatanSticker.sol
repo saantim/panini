@@ -16,21 +16,7 @@ contract QatanSticker is ERC721, Ownable {
     mapping(uint256 => uint256) public stickerToPlayer;
     mapping(uint256 => string) public playerToURI;
 
-    address private packageContractAddress;
     uint256 private maxPlayer = 711;
-
-    /// @notice You can set the package contract where you gonna get your stickers from
-    /// @dev From here you can set the package contract. This contract gonna be necesary to use the onlyPackageContract() modifier
-    /// @param newPackageAddress a package contract address
-    function setPackageAddress(address newPackageAddress) public onlyOwner {
-        packageContractAddress = newPackageAddress;
-    }
-
-    /// @dev This modifier verifies if the package contract is the message sender
-    modifier onlyPackageContract() {
-        require(msg.sender == packageContractAddress, "Forbidden");
-        _;
-    }
 
     constructor() ERC721("QatarSticker", "QST") {}
 
@@ -41,7 +27,7 @@ contract QatanSticker is ERC721, Ownable {
     function createStickers(
         address packageOwner,
         uint256 quantity
-    ) public onlyPackageContract {
+    ) internal {
         for (uint i = 0; i < quantity; i++) {
             safeMint(packageOwner);
         }

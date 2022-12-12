@@ -1,13 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "./QatanStickers.sol";
+import "./QatanStickerPackage.sol";
 
 /// @title A Sticker Exchange's implementation
 /// @author @mrti259/@saantim/@ovr4ulin
 /// @notice You can use this contract to swap stickers between differt wallets
 /// @dev You can create an exchange where you offer one sticker token and requier another one. Then another person could accept this exchange if meet the requierments.
-contract QatanStickerExchange is QatanSticker {
+contract QatanStickerExchange is QatanStickerPackage {
     struct Exchange {
         address owner;
         uint256 tokenIdToExchange;
