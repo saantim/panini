@@ -1,4 +1,4 @@
-import { Package, Coin } from "../shared-ts/utils";
+import { Package, Coin, Sticker } from "../shared-ts/utils";
 import {
   FiubaCoinInstance,
   StickerPackageContractInstance,
@@ -15,12 +15,15 @@ contract(Package.contractName, function (accounts) {
     packageInstance = await Package.new();
     coinInstance = await Coin.new();
     coinPrice = await coinInstance.mintPrice();
+    const stickerInstance = await Sticker.new();
 
     const owner = await packageInstance.owner();
     await packageInstance.setFiubaCoinAddress(coinInstance.address, {
       from: owner,
     });
     await packageInstance.setPrice(packagePrice, { from: owner });
+    await packageInstance.setStickerAddress(stickerInstance.address);
+    await stickerInstance.setPackageContractAddress(packageInstance.address);
   });
 
   it("Start with 0 packages", async function () {
@@ -52,5 +55,26 @@ contract(Package.contractName, function (accounts) {
     await packageInstance.buyPackages(expectedPackages, { from: alice });
     const balance = await packageInstance.getAmountOfPackagesFrom(alice);
     expect(balance.toNumber()).to.eq(expectedPackages);
+  });
+
+  it("Open a package", async function () {
+    const expectedPackages = 9;
+    const amount = (expectedPackages + 1) * packagePrice;
+    await coinInstance.getFiubaCoin(amount, {
+      from: alice,
+      value: coinPrice.muln(amount),
+    });
+    await coinInstance.approve(packageInstance.address, amount.toString());
+    await packageInstance.buyPackages(expectedPackages + 1, { from: alice });
+    await packageInstance.openPackage({ from: alice });
+    const balance = await packageInstance.getAmountOfPackagesFrom(alice);
+    expect(balance.toNumber()).to.eq(expectedPackages);
+  });
+
+  it("Revert open package when account has no packages", async function () {
+    await packageInstance
+      .openPackage({ from: alice })
+      .then(() => expect.fail())
+      .catch((err) => expect(err));
   });
 });
