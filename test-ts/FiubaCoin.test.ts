@@ -18,7 +18,7 @@ contract(Coin.contractName, function (accounts) {
     expect(balance.toNumber()).to.eq(0);
   });
 
-  it("A coin has a price settled", async function () {
+  it("A coin has a price setted", async function () {
     const expectedPrice = toWei("0.001", "ether");
     expect(price.toString()).to.eq(expectedPrice);
   });
