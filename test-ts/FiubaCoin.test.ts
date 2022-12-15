@@ -1,14 +1,16 @@
-const FiubaCoin = artifacts.require("FiubaCoin");
 import { expect } from "chai";
 import { toWei } from "web3-utils";
+import { Coin } from "../shared-ts/utils";
 import { FiubaCoinInstance } from "../types/truffle-contracts";
 
-contract("FiubaCoin", function (accounts) {
+contract(Coin.contractName, function (accounts) {
   let [alice] = accounts;
   let contractInstance: FiubaCoinInstance;
+  let price: BN;
 
   beforeEach(async function () {
-    contractInstance = await FiubaCoin.new();
+    contractInstance = await Coin.new();
+    price = await contractInstance.mintPrice();
   });
 
   it("Start with 0 coins", async function () {
@@ -16,15 +18,33 @@ contract("FiubaCoin", function (accounts) {
     expect(balance.toNumber()).to.eq(0);
   });
 
-  it("Buy 1 coin", async function () {
-    const expectedCoins = 1;
-    await contractInstance.getFiubaCoin(expectedCoins, {
+  it("A coin has a price settled", async function () {
+    const expectedPrice = toWei("0.001", "ether");
+    expect(price.toString()).to.eq(expectedPrice);
+  });
+
+  it("Buy a coin", async function () {
+    const expectedBalance = 1;
+    await contractInstance.getFiubaCoin(expectedBalance, {
       from: alice,
-      value: toWei("0.001", "ether"),
+      value: price,
     });
     const balance = await contractInstance.balanceOf(alice);
-    const decimals = await contractInstance.decimals();
-    const expectedBalance = expectedCoins * 10 ** decimals.toNumber();
     expect(balance.toString()).to.eq(expectedBalance.toString());
+  });
+
+  it("Buy many coins", async function () {
+    const expectedBalance = 10;
+    await contractInstance.getFiubaCoin(expectedBalance, {
+      from: alice,
+      value: price.muln(10),
+    });
+    const balance = await contractInstance.balanceOf(alice);
+    expect(balance.toString()).to.eq(expectedBalance.toString());
+  });
+
+  it("A coin has no decimals", async function () {
+    const decimals = await contractInstance.decimals();
+    expect(decimals.toNumber()).to.eq(0);
   });
 });

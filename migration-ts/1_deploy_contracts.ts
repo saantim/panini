@@ -1,10 +1,7 @@
-const FiubaCoin = artifacts.require("FiubaCoin");
-const Sticker = artifacts.require("QatarSticker");
-const Package = artifacts.require("StickerPackageContract");
-const Exchange = artifacts.require("ExchangeOfQatarSticker");
+import { Coin, Sticker, Package, Exchange } from "../shared-ts/utils";
 
 const migrations: Truffle.Migration = (deployer) => {
-  deployer.deploy(FiubaCoin);
+  deployer.deploy(Coin);
   deployer.deploy(Sticker);
   deployer.deploy(Package);
   deployer.deploy(Exchange);

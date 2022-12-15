@@ -15,8 +15,8 @@
     "format": "prettier --write contracts",
     "lint": "prettier --list-different contracts",
     "generate-types": "typechain --target=truffle-v5 'build/contracts/*.json'",
-    "migrate": "tsc -p ./tsconfig.migrate.json --outDir ./migrations && truffle migrate",
-    "test": "tsc -p ./tsconfig.test.json --outDir ./test && truffle test",
+    "migrate": "rm -rf migrations && tsc -p ./tsconfig.migrate.json && truffle migrate",
+    "test": "rm -rf test && tsc -p ./tsconfig.test.json && truffle test --debug",
     "typecheck": "truffle compile && npm run generate-types && tsc --noEmit"
   },
   "repository": {
