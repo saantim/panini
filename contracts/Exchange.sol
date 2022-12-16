@@ -8,6 +8,8 @@ import "./Stickers.sol";
 /// @notice You can use this contract to swap stickers between differt wallets
 /// @dev You can create an exchange where you offer one sticker token and requier another one. Then another person could accept this exchange if meet the requierments. 
 contract ExchangeOfQatarSticker is QatarSticker{
+    event TransactionDone(uint exchangeId);
+
     struct exchange {
         address owner;
         uint tokenIdToExchange;
@@ -72,6 +74,7 @@ contract ExchangeOfQatarSticker is QatarSticker{
         _transfer(interested, owner, tokenIdWanted);
         cancelExchangeWithExchangeId(tokenIdToExchange);
         cancelExchangeWithExchangeId(tokenIdWanted);
+        emit TransactionDone(exchangeId);
     }
 
     /// @dev You can use this function to cancel an Exchange. After that, the exchange can not be accepted
