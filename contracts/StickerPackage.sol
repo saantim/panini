@@ -43,7 +43,7 @@ contract StickerPackageContract is Ownable {
   /// @dev Only the owner of this contract could change the price
   /// @param _price New price of a package
   function setPrice(uint _price) external onlyOwner {
-    price = _price * 10 ** 18; 
+    price = _price; 
   }
   
   /// @notice Set the FiubaCoin contract address

@@ -26,6 +26,10 @@ contract FiubaCoin is ERC20 {
     /// @param quantity It's the quantity of FiubaCoins to be minted
     function getFiubaCoin(uint256 quantity) public payable {
         require(quantity * mintPrice == msg.value, "wrong amount sent");
-        _mint(msg.sender, n * 10 ** 18);
+        _mint(msg.sender, quantity);
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 0;
     }
 }

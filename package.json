@@ -7,11 +7,17 @@
     "test": "test"
   },
   "scripts": {
-    "ganache": "ganache-cli --deterministic",
+    "network": "ganache-cli --deterministic",
+    "networks": "truffle networks",
     "compile": "truffle compile",
     "develop": "truffle develop",
-    "migrate": "truffle migrate",
-    "deploy": "truffle deploy"
+    "console": "truffle console",
+    "format": "prettier --write contracts",
+    "lint": "prettier --list-different contracts",
+    "generate-types": "typechain --target=truffle-v5 'build/contracts/*.json'",
+    "migrate": "rm -rf migrations && tsc -p ./tsconfig.migrate.json && truffle migrate",
+    "test": "rm -rf test && tsc -p ./tsconfig.test.json && truffle test --debug",
+    "typecheck": "truffle compile && npm run generate-types && tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -25,7 +31,16 @@
   "homepage": "https://github.com/saantim/panini#readme",
   "devDependencies": {
     "@openzeppelin/contracts": "^4.8.0",
+    "@typechain/truffle-v5": "^8.0.2",
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.7",
     "ganache-cli": "^6.12.2",
-    "truffle": "^5.6.7"
+    "prettier": "^2.8.1",
+    "prettier-plugin-solidity": "^1.1.0",
+    "truffle": "^5.6.7",
+    "typechain": "^8.1.1",
+    "typecript": "^0.0.1-security",
+    "web3-utils": "^1.8.1"
   }
 }
