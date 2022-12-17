@@ -59,7 +59,7 @@ contract QatarSticker is ERC721, Ownable{
     /// @dev This private function returns a pseudo random value less than `maxPlayer`
     /// @return randomPlayerId It's a pseudo random value less than `maxPlayer`
     function randomPlayerId() private view returns (uint256) {
-        uint randId = uint(keccak256(abi.encodePacked(totalMints)));
+        uint randId = uint(keccak256(abi.encodePacked(totalMints + block.timestamp)));
         return randId % maxPlayer; 
     }
 
