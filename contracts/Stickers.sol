@@ -110,16 +110,21 @@ contract QatarSticker is ERC721, Ownable{
         _;
     }
 
+    function _baseURI(string memory newURI) internal virtual {
+        URI = newURI;
+    }
+
     /// @notice You can use this function to set URI base.
     /// @dev This function only can be called by contract's owner.
     /// @param newURI URI to set.
     function setURIBase(string memory newURI) public onlyOwner {
-        URI = newURI;
+        _baseURI(newURI);
     }
 
     /// @notice You can use this function to get sticker URI.
-    /// @return areEquals It's the URI of stickerId.
-    function getURIFromStickerId(uint256 stickerId) public view withURISetted returns (string memory) {
+    /// @return URI It's the URI of stickerId.
+    function tokenURI(uint256 stickerId) public view virtual override withURISetted returns (string memory) {
+        _requireMinted(stickerId);
         uint256 playerId = getPlayerIdFromStickerId(stickerId);
         string memory playerIdStr = Strings.toString(playerId);
         return string.concat(URI, playerIdStr);
