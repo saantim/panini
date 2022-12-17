@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 /// @title A world cup sticker implementation
 /// @author @mrti259/@saantim/@ovr4ulin
@@ -12,10 +13,9 @@ contract QatarSticker is ERC721, Ownable{
 
     uint256 public totalMints = 0;
     uint256 public mintPrice = 1000000 gwei; 
-    string public URI = "https://bafybeifqmgyfy4by3gpms5sdv3ft3knccmjsqxfqquuxemohtwfm7y7nwa.ipfs.dweb.link/metadata.json";
+    string private URI = "";
     
     mapping(uint256 => uint256) public stickerToPlayer;
-    mapping(uint256 => string) public playerToURI; 
     
     address private packageContractAddress;
     uint256 private maxPlayer = 711;
@@ -87,5 +87,41 @@ contract QatarSticker is ERC721, Ownable{
         }
 
         return result;
+    }
+
+    /// @dev If <s1> and <s2> are equal, so the function returns True, else it returns False.
+    /// @param s1 It's first string to compare.
+    /// @param s2 It's second string to compare.
+    /// @return areEquals It's True if <s1> and <s2> are equals, else it's False.
+    function stringsEquals(string memory s1, string memory s2) private pure returns (bool) {
+        bytes memory b1 = bytes(s1);
+        bytes memory b2 = bytes(s2);
+        uint256 l1 = b1.length;
+        if (l1 != b2.length) return false;
+        for (uint256 i=0; i<l1; i++) {
+            if (b1[i] != b2[i]) return false;
+        }
+        return true;
+    }
+
+    /// @dev This modifier verifies if the URI base was set
+    modifier withURISetted() {
+        require(!stringsEquals(URI, ""));
+        _;
+    }
+
+    /// @notice You can use this function to set URI base.
+    /// @dev This function only can be called by contract's owner.
+    /// @param newURI URI to set.
+    function setURIBase(string memory newURI) public onlyOwner {
+        URI = newURI;
+    }
+
+    /// @notice You can use this function to get sticker URI.
+    /// @return areEquals It's the URI of stickerId.
+    function getURIFromStickerId(uint256 stickerId) public view withURISetted returns (string memory) {
+        uint256 playerId = getPlayerIdFromStickerId(stickerId);
+        string memory playerIdStr = Strings.toString(playerId);
+        return string.concat(URI, playerIdStr);
     }
 }
