@@ -1,5 +1,5 @@
 # 75.31 - Teoría del Lenguaje - FIUBA
-### Trabajo Práctico Integrador -Solidity - Grupo Panini - 2022 2Q
+### Trabajo Práctico Integrador - Solidity - Grupo Panini - 2022 2Q
 
 ### [> Implementación del Front End <](https://github.com/mrti259/panini-app)
 
